@@ -1,6 +1,6 @@
 # Franka_Data
 This repo contains the required data needed for training diffusion policy on the real franka hardware.
-Step by Step procedure to collect Data:
+Step by Step procedure to collect Data from Human demonstration for the PushT task.
 
 # Diffusion Policy
 
@@ -19,42 +19,41 @@ Step by Step procedure to collect Data:
 [Benjamin Burchfiel](http://www.benburchfiel.com/)<sup>2</sup>,
 [Shuran Song](https://www.cs.columbia.edu/~shurans/)<sup>1</sup>
 
-**
+
 ## Camera access and functioning:-
 1. we use 3 Brio cameras for this purpose
 2. use **cv2_enemurate libraryy** to loop through camera_index
-3. refer to the file - [human_collect_video](https://github.com/VaRuN-2509/Franka_Data/blob/main/human_demo_video.py)
+3. refer to the file - [human_demo_video](https://github.com/VaRuN-2509/Franka_Data/blob/main/human_demo_video.py)
    
 
 #**2.Topic to gather data from**
 1. run the ros2 launch file - franka.bringup to start the hardware
 2. ros2 topic list :
-``console
-                        * /dynamic_joint_states
-                        * /franka_robot_state_broadcaster/current_pose
-                        * /franka_robot_state_broadcaster/desired_end_effector_twist
-                        * /franka_robot_state_broadcaster/desired_joint_states
-                        * /franka_robot_state_broadcaster/external_joint_torques
-                        * /franka_robot_state_broadcaster/external_wrench_in_base_frame
-                        * /franka_robot_state_broadcaster/external_wrench_in_stiffness_frame
-                        * /franka_robot_state_broadcaster/last_desired_pose
-                        * /franka_robot_state_broadcaster/measured_joint_states
-                        * /franka_robot_state_broadcaster/robot_state
-                        * /franka_robot_state_broadcaster/transition_event
-                        * /joint_state_broadcaster/transition_event
-                        * /joint_states
-                        * /parameter_events
-                        * /robot_description
-                        * /rosout
-                        * /tf
-                        * /tf_static
-                        ```
-3.subscribe to :```console
-                      /franka_robot_state_broadcaster/current_pose
-                      /franka_robot_state_broadcaster/measured_joint_states
-                      /franka_robot_state_broadcaster/desired_end_effector_twist
-                    ```
-4.refer to the file -> [https://github.com/VaRuN-2509/Franka_Data/blob/main/human_demo_pose.py](https://github.com/VaRuN-2509/Franka_Data/blob/main/human_demo_pose.py)
+  * /dynamic_joint_states
+  * /franka_robot_state_broadcaster/current_pose
+  * /franka_robot_state_broadcaster/desired_end_effector_twist
+  * /franka_robot_state_broadcaster/desired_joint_states
+  * /franka_robot_state_broadcaster/external_joint_torques
+  * /franka_robot_state_broadcaster/external_wrench_in_base_frame
+  * /franka_robot_state_broadcaster/external_wrench_in_stiffness_frame
+  * /franka_robot_state_broadcaster/last_desired_pose
+  * /franka_robot_state_broadcaster/measured_joint_states
+  * /franka_robot_state_broadcaster/robot_state
+  * /franka_robot_state_broadcaster/transition_event
+  * /joint_state_broadcaster/transition_event
+  * /joint_states
+  * /parameter_events
+  * /robot_description
+  * /rosout
+  * /tf
+  * /tf_static
+    
+3.subscribe to :
+* /franka_robot_state_broadcaster/current_pose
+* /franka_robot_state_broadcaster/measured_joint_states
+* /franka_robot_state_broadcaster/desired_end_effector_twist
+
+4.refer to the file -> [human_demo_pose](https://github.com/VaRuN-2509/Franka_Data/blob/main/human_demo_pose.py)
 
 
 ## File structure of collected data
