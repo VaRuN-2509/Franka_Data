@@ -79,7 +79,7 @@ class CameraNode(Node):
             images = [cv2.resize(img, (720, 720), interpolation=cv2.INTER_AREA) for img in images]
             images = np.array(images)
             print(images.shape)
-            output_path = f"data/video/human_demo_{self.args.demo_idx}/camera_{cam.idx}.mp4"
+            output_path = f"data/videos/{self.args.demo_idx}/{cam.idx}"
             os.makedirs(os.path.dirname(output_path), exist_ok=True)
             write_video(images, output_path)
             print(f"✅ Video saved to: {os.path.abspath(output_path)}")

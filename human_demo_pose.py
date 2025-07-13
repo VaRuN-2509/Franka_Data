@@ -27,13 +27,15 @@ class PoseSubscriber(Node):
         self.ts.registerCallback(self.synced_callback)
 
         # Zarr setup
-        zarr_file_path = os.path.expanduser('~/Documents/data_collection/data/demonstration.zarr')
+        zarr_file_path = os.path.expanduser('~/Documents/data_collection/data/replay_buffer.zarr')
         self.zarr_root = zarr.open(zarr_file_path, mode='a')
         self.data_group = self.zarr_root.require_group('data')
         self.meta_group = self.zarr_root.require_group('meta')
 
         if 'eef_pose' not in self.data_group:
             self.data_group.create_dataset('eef_pose', shape=(0, 7), maxshape=(None, 7), chunks=(100, 7), dtype='f4')
+        if 'action' not in self.data_group:
+            self.data_group.create_dataset('action', shape=(0, 7), maxshape=(None, 7), chunks=(100, 7), dtype='f4')
         if 'eef_velocity' not in self.data_group:
             self.data_group.create_dataset('eef_velocity', shape=(0, 6), maxshape=(None, 6), chunks=(100, 6), dtype='f4')
         if 'joint_pose' not in self.data_group:
@@ -43,7 +45,7 @@ class PoseSubscriber(Node):
         if 'timestamp' not in self.data_group:
             self.data_group.create_dataset('timestamp',shape=(1,),maxshape=(None, 7), chunks=(100,))
         if 'episode_ends' not in self.meta_group:
-            self.meta_group.create_dataset('episode_ends',shape=(1,),maxshape=(None,),dtype='f4')
+            self.meta_group.create_dataset('episode_ends',shape=(0,),maxshape=(None,),chunks=(100,),dtype='f4')
 
         self.target_interval = 1.0 /self.args.fps
         self.last_recorded_time = self.get_clock().now()
@@ -70,6 +72,9 @@ class PoseSubscriber(Node):
         ], dtype=np.float32)
         self.data_group['eef_pose'].resize((idx + 1, 7))
         self.data_group['eef_pose'][idx] = pose_np
+
+        self.data_group['action'].resize((idx + 1, 7))
+        self.data_group['action'][idx] = pose_np
 
         # Process and save eef_velocity
         vel_np = np.array([
@@ -107,19 +112,13 @@ def main():
     except KeyboardInterrupt:
         pass
     finally:
-        end_idx = node.data_group['timestamp'].shape[0] - 1
+        end_idx = node.data_group['timestamp'].shape[0]
         ep_ds = node.meta_group['episode_ends']
-
-        demo_idx = args.demo_idx
         current_shape = ep_ds.shape[0]
 
-        if demo_idx < current_shape:
-            print(f"⚠️ Overwriting episode_ends[{demo_idx}]")
-        else:
-            ep_ds.resize((demo_idx + 1,))
-
-        ep_ds[demo_idx] = end_idx
-        print(f"✅ Recorded episode {demo_idx} ending at index {end_idx}")
+        ep_ds.resize((current_shape + 1,))
+        ep_ds[current_shape] = end_idx
+        print(f"✅ Recorded episode {current_shape} ending at index {end_idx}")
 
         node.destroy_node()
 
